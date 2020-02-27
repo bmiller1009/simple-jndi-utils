@@ -75,6 +75,7 @@ dependencies {
     implementation("com.github.h-thurow", "simple-jndi","0.18.1")
     implementation("org.apache.logging.log4j", "log4j-slf4j-impl", "2.12.0")
     implementation("commons-io", "commons-io", "2.6")
+    implementation("org.bradfordmiller:kotlinutils:0.0.1")
     // Use the Kotlin test library.
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 

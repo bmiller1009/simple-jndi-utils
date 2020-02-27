@@ -1,10 +1,9 @@
 package org.bradfordmiller.simplejndiutils
 
 import org.apache.commons.io.FilenameUtils
-import org.bradfordmiller.deduper.config.SourceJndi
-import org.bradfordmiller.deduper.utils.Either
-import org.bradfordmiller.deduper.utils.Left
-import org.bradfordmiller.deduper.utils.Right
+import org.bradfordmiller.kotlinutils.Either
+import org.bradfordmiller.kotlinutils.Left
+import org.bradfordmiller.kotlinutils.Right
 import org.osjava.sj.jndi.MemoryContext
 import org.slf4j.LoggerFactory
 import java.io.*
@@ -78,25 +77,14 @@ class JNDIUtils {
             return getConnection(ds)!!
         }
         /**
-         * returns [Connection] from Datasource object configured a [jndiTargetType]
-         */
-        fun getJndiConnection(jndiTargetType: JNDITargetType): Connection {
-            return getJndiConnection(jndiTargetType.jndi, jndiTargetType.context)
-        }
-        /**
-         * returns [Connection] from Datasource object configured a [jndiTargetType]
-         */
-        fun getJndiConnection(sourceJndi: SourceJndi): Connection {
-            return getJndiConnection(sourceJndi.jndiName, sourceJndi.context)
-        }
-        /**
          * returns a list of all available jndi contexts found under the "org.osjava.sj.root" setting in jndi.properties
+         * based on a specific [context].  Note that an empty context is created if a context is not passed in.
          *
          * @throws IOException
          */
-        fun getAvailableJndiContexts(): List<String> {
-            val ctx = InitialContext()
-            val root = ctx.environment.get("org.osjava.sj.root").toString()
+        fun getAvailableJndiContexts(context: InitialContext = InitialContext()): List<String> {
+
+            val root = context.environment.get("org.osjava.sj.root").toString()
 
             try {
                 val files = Files.walk(Paths.get(root)).filter {it ->

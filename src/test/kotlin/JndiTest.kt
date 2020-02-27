@@ -1,17 +1,12 @@
-package org.bradfordmiller.simplejndiutils
-
-import org.bradfordmiller.deduper.jndi.JNDIUtils
-import org.bradfordmiller.deduper.utils.Left
-import org.bradfordmiller.deduper.utils.Right
+import org.bradfordmiller.kotlinutils.Left
+import org.bradfordmiller.kotlinutils.Right
+import org.bradfordmiller.simplejndiutils.JNDIUtils
 import org.junit.jupiter.api.BeforeAll
 
 import org.junit.jupiter.api.Test
-import org.osjava.sj.jndi.JndiUtils
 import java.io.File
-import javax.naming.Context
 import javax.naming.InitialContext
 import javax.sql.DataSource
-import javax.xml.crypto.Data
 
 class JndiTest {
 
@@ -95,7 +90,7 @@ class JndiTest {
         val entries = JNDIUtils.getEntriesForJndiContext(mc!!)
 
         assert(mc != null)
-        assert(entries.size == 14)
+        assert(entries.size == 2)
         assert(entries.get("RealEstateOutDupesUseDefaults") == "{targetName=src/test/resources/data/outputData/dupeName}")
     }
 
