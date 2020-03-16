@@ -2,7 +2,6 @@ package org.bradfordmiller.simplejndiutils;
 
 import io.vavr.control.Either;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.osjava.sj.jndi.MemoryContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +29,7 @@ public class JNDIUtils {
             var mc = (MemoryContext) initCtx.lookup(contextName); // as MemoryContext);
             return mc;
         } catch (NamingException ne) {
-            logger.info(String.format("Naming exception occurred on jndi lookup of context %s: %s", contextName, ne.getMessage()));
+            logger.error(String.format("Naming exception occurred on jndi lookup of context %s: %s", contextName, ne.getMessage()));
             return null;
         }
     }
@@ -54,7 +53,7 @@ public class JNDIUtils {
                 throw new UnknownObjectException(String.format("jndi entry %s for context %s is neither a DataSource or a Map<string, String", jndi, context));
             }
         } catch (NamingException | UnknownObjectException ne) {
-            logger.info(String.format("Naming exception occurred on jndi lookup of context %s: %s", context, ne.getMessage()));
+            logger.error(String.format("Naming exception occurred on jndi lookup of context %s: %s", context, ne.getMessage()));
             return null;
         }
     }
@@ -97,8 +96,9 @@ public class JNDIUtils {
                     pathFiles.map(f ->
                             f.toString()).filter(f -> f.endsWith(".properties")).collect(Collectors.toList());
             return files;
-        } catch (IOException e) {
-            throw e;
+        } catch (IOException ioex) {
+            logger.error(String.format("Error accessing available jndi contexts: %s", ioex.getMessage()));
+            throw ioex;
         }
     }
     /**
@@ -146,8 +146,9 @@ public class JNDIUtils {
                             }
                         }
                 );
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ioex) {
+                logger.error(String.format("Error adding jndi connection: %s", ioex.getMessage()));
+                throw new RuntimeException(ioex);
             }
         };
 
@@ -197,12 +198,12 @@ public class JNDIUtils {
                     return true;
                 }
             }
-        } catch (IllegalAccessException e) {
-            logger.error("");
-            throw e;
-        } catch (NoSuchFieldException e) {
-            logger.error("");
-            throw e;
+        } catch (IllegalAccessException iaex) {
+            logger.error(String.format("Illegal access exception while adding jndi connection: %s", iaex.getMessage()));
+            throw iaex;
+        } catch (NoSuchFieldException nsfex) {
+            logger.error(String.format("No such field exception hit while adding jndi connection: %s", nsfex.getMessage()));
+            throw nsfex;
         } finally {
             logger.info("Deleting lock file. Directory is writable.");
             lockFile.delete();

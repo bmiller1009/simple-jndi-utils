@@ -4,15 +4,12 @@
  * This generated file contains a sample Kotlin application project to get you started.
  */
 import org.jetbrains.dokka.gradle.DokkaTask
-import groovy.lang.Closure
-import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import java.util.Properties
 import java.io.File
 import java.time.Duration
 
 plugins {
     // Apply the Kotlin JVM plugin to add support for Kotlin on the JVM.
-    id("org.jetbrains.kotlin.jvm").version("1.3.61")
     id("org.jetbrains.dokka").version("0.10.0")
     id("net.researchgate.release").version("2.6.0")
     id("java-library")
@@ -69,18 +66,12 @@ repositories {
 
 dependencies {
     // Use the Kotlin JDK 8 standard library.
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.apache.logging.log4j",  "log4j-core",  "2.12.0")
     implementation("org.apache.logging.log4j",  "log4j-api",  "2.12.0")
     implementation("com.github.h-thurow", "simple-jndi","0.18.1")
     implementation("org.apache.logging.log4j", "log4j-slf4j-impl", "2.12.0")
     implementation("commons-io", "commons-io", "2.6")
     implementation("io.vavr:vavr:0.9.0")
-    // Use the Kotlin test library.
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-
-    // Use the Kotlin JUnit integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 }
 
