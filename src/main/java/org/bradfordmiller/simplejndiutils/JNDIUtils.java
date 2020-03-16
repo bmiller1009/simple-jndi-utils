@@ -17,12 +17,19 @@ import javax.sql.DataSource;
 import java.util.function.BiConsumer;
 import java.util.stream.*;
 
+/***
+ * Helper functions for the simple-jndi API
+ * @author - Bradford Miller
+ */
 public class JNDIUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JNDIUtils.class);
 
-    /**
-     * returns a nullable [MemoryContext] based on [initCtx] and the associated [contextName]
+    /***
+     *
+     * @param initCtx - context to extract memory context from
+     * @param contextName - name of context being targeted
+     * @return a nullable memory context based on {@code initCtx} and {@code contextName}
      */
     public static MemoryContext getMemoryContextFromInitContext(InitialContext initCtx, String contextName) {
         try {
@@ -33,11 +40,11 @@ public class JNDIUtils {
             return null;
         }
     }
-
-    /**
-     * returns an [Either] of a [DataSource] or a [Map] based on the [jndi] name in the associated [context]
+    /***
      *
-     * @throws UnknownObjectException
+     * @param jndi - the jndi name being referenced
+     * @param context - the context being targeted
+     * @return an Either of a DataSource or a Map based on the {@code jndi} and {@code context}
      */
     public static Either<DataSource, Map<String, String>> getDataSource(String jndi, String context) {
         try {
@@ -57,9 +64,10 @@ public class JNDIUtils {
             return null;
         }
     }
-
-    /**
-     * returns a nullable [Connection] from [DataSource] [ds]
+    /***
+     *
+     * @param ds - the datasource from which a connection is created
+     * @return a java.sql.Connection
      * @throws SQLException
      */
     public static Connection getConnection(DataSource ds) throws SQLException {
@@ -70,19 +78,22 @@ public class JNDIUtils {
             throw sqlEx;
         }
     }
-
-    /**
-     * returns [Connection] from Datasource object configured in [jndiString] and the associated [context]
+    /***
+     *
+     * @param jndiString - jndi entry to be looked up
+     * @param context - context to lookup jndi string in
+     * @return a java.sql connection based on the {@code jndiString} and {@code context}
+     * @throws SQLException
      */
     public static Connection getJndiConnection(String jndiString, String context) throws SQLException {
         var ds = (DataSource) Either.left(getDataSource(jndiString, context)).getLeft();
         return getConnection(ds);
     }
-
-    /**
-     * returns a list of all available jndi contexts found under the "org.osjava.sj.root" setting in jndi.properties
-     * based on a specific [context].  Note that an empty context is created if a context is not passed in.
+    /***
      *
+     * @param context a context to find property files for, if null then it uses a new context
+     * @return a list of property files which comprise the jndi contexts
+     * @throws NamingException
      * @throws IOException
      */
     public static List<String> getAvailableJndiContexts(InitialContext context) throws NamingException, IOException {
@@ -101,8 +112,12 @@ public class JNDIUtils {
             throw ioex;
         }
     }
-    /**
-     * returns a key/value pair of jndi entries in a specific [memoryContext]
+    /***
+     *
+     * @param memoryContext context to lookup entries for
+     * @return a map of key value pairs from a specific {@code memoryContext}
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
      */
     public static Map<String, String> getEntriesForJndiContext(MemoryContext memoryContext) throws NoSuchFieldException, IllegalAccessException {
 
@@ -118,18 +133,30 @@ public class JNDIUtils {
 
         return map;
     }
-
-    /**
-     * returns specific details for a [context], jndi name [jndiName], and a specific [entry] in the jndi
+    /***
+     *
+     * @param context context to look up entry
+     * @param jndiName jndi to look up in context
+     * @param entry entry within jndi to pull entry for
+     * @return a map entry for a specific {@code context} and jndi {@code jndiName} and the jndi {@code entry}
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
      */
     public static Map.Entry<String, String> getDetailsforJndiEntry(InitialContext context, String jndiName, String entry) throws NoSuchFieldException, IllegalAccessException {
         var mc = getMemoryContextFromInitContext(context, jndiName);
         var entries = getEntriesForJndiContext(mc);
         return new AbstractMap.SimpleEntry<>(entry, entries.get(entry));
     }
-
-    /**
-     * add a new jndi entry to specific context based on the [jndiName], [context], and [values]
+    /***
+     *
+     * @param jndiName jndi to look up in context
+     * @param context context to look up entry
+     * @param values map of values to save to the jndi and context
+     * @return indication that the new jndi connection was saved
+     * @throws NamingException
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws NoSuchFieldException
      */
     public static Boolean addJndiConnection(String jndiName, String context, Map<String, String> values) throws NamingException, IOException, IllegalAccessException, NoSuchFieldException {
 
