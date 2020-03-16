@@ -1,4 +1,4 @@
-package org.bradfordmiller.simplejndiutils
+/*package org.bradfordmiller.simplejndiutils
 
 import org.apache.commons.io.FilenameUtils
 import org.bradfordmiller.kotlinutils.Either
@@ -188,3 +188,4 @@ class JNDIUtils {
         }
     }
 }
+*/

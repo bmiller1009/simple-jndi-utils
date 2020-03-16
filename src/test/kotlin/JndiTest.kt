@@ -1,5 +1,5 @@
-import org.bradfordmiller.kotlinutils.Left
-import org.bradfordmiller.kotlinutils.Right
+/*
+import io.vavr.control.Either
 import org.bradfordmiller.simplejndiutils.JNDIUtils
 import org.junit.jupiter.api.BeforeAll
 
@@ -62,15 +62,15 @@ class JndiTest {
                 )
         )
 
-        val entryAddNew = (JNDIUtils.getDataSource(jndi, ctx) as Right<DataSource?, Map<String, String>>).right
+        val entryAddNew = (JNDIUtils.getDataSource(jndi, ctx) as Either.Right<DataSource?, Map<String, String>>).right();
         val entryAddExistingCsv =
-                (JNDIUtils.getDataSource("BradTestJNDI_22", ctx) as Right<DataSource?, Map<String, String>>).right
+                (JNDIUtils.getDataSource("BradTestJNDI_22", ctx) as Either.Right<DataSource?, Map<String, String>>).right()
         val entryAddExistingSql =
-                (JNDIUtils.getDataSource("BradTestJNDI_23", ctx) as Left<DataSource?, Map<String, String>>).left
+                (JNDIUtils.getDataSource("BradTestJNDI_23", ctx) as Either.Left<DataSource?, Map<String, String>>).left
 
-        assert((entryAddNew is Map<String, String>))
-        assert((entryAddExistingCsv is Map<String, String>))
-        assert((entryAddExistingSql is DataSource?))
+        assert((entryAddNew is Map<String, String>));
+        assert((entryAddExistingCsv is Map<String, String>));
+        assert((entryAddExistingSql is DataSource?));
 
         File("$root/$ctx.properties").delete()
     }
@@ -105,3 +105,4 @@ class JndiTest {
         assert(entryResult.second == "org.sqlite.JDBC::::jdbc:sqlite:src/test/resources/data/outputData/real_estate.db::::TestUser")
     }
 }
+*/
