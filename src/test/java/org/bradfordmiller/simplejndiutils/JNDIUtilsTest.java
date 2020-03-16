@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
@@ -23,7 +22,6 @@ public class JNDIUtilsTest {
             new File(file).delete();
         initCtx.close();
     }
-
     @Test
     public void addNewJndiResources() throws NamingException, IllegalAccessException, NoSuchFieldException, IOException {
 
@@ -72,6 +70,31 @@ public class JNDIUtilsTest {
 
         new File(String.format("%s/%s.properties", root, ctx)).delete();
     }
+    @Test
+    public void getAllJndiContexts() throws IOException, NamingException {
+        var contexts = JNDIUtils.getAvailableJndiContexts(null);
+        assert(contexts.size() == 1);
+        assert(contexts.get(0).equals("src/test/resources/jndi/default_ds.properties"));
+    }
+    @Test
+    public void getEntriesForJndiContext() throws NoSuchFieldException, IllegalAccessException, NamingException {
+        var initCtx = new InitialContext();
+        var contextName = "default_ds";
+        var mc = JNDIUtils.getMemoryContextFromInitContext(initCtx, contextName);
+        var entries = JNDIUtils.getEntriesForJndiContext(mc);
 
+        assert(mc != null);
+        assert(entries.size() == 2);
+        assert(entries.get("RealEstateOutDupesUseDefaults").equals("{targetName=src/test/resources/data/outputData/dupeName}"));
+    }
+    @Test
+    public void getJndiEntry() throws NamingException, NoSuchFieldException, IllegalAccessException {
+        var initCtx = new InitialContext();
+        var contextName = "default_ds";
+        var entry = "SqlLiteTestPW";
+        var entryResult = JNDIUtils.getDetailsforJndiEntry(initCtx, contextName, entry);
 
+        assert(entryResult.getKey().equals("SqlLiteTestPW"));
+        assert(entryResult.getValue().equals("org.sqlite.JDBC::::jdbc:sqlite:src/test/resources/data/outputData/real_estate.db::::TestUser"));
+    }
 }

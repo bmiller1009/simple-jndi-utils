@@ -92,15 +92,15 @@ public class JNDIUtils {
             context = new InitialContext();
 
         var root = context.getEnvironment().get("org.osjava.sj.root").toString();
-
-        var files = Files.walk(Paths.get(root)).filter (f ->
-            !Files.isDirectory(f) &&
-            FilenameUtils.getExtension(f.getFileName().toString()) == "properties"
-        );
-
-        return files.map(f -> f.toString()).collect(Collectors.toList());
+        try(var pathFiles = Files.walk(Paths.get(root))) {
+            var files =
+                    pathFiles.map(f ->
+                            f.toString()).filter(f -> f.endsWith(".properties")).collect(Collectors.toList());
+            return files;
+        } catch (IOException e) {
+            throw e;
+        }
     }
-
     /**
      * returns a key/value pair of jndi entries in a specific [memoryContext]
      */
