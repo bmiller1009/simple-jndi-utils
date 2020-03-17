@@ -86,7 +86,7 @@ public class JNDIUtils {
      * @throws SQLException
      */
     public static Connection getJndiConnection(String jndiString, String context) throws SQLException {
-        var ds = (DataSource) Either.left(getDataSource(jndiString, context)).getLeft();
+        var ds = getDataSource(jndiString, context).getLeft();
         return getConnection(ds);
     }
     /***
