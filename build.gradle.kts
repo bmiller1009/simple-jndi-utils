@@ -68,7 +68,7 @@ dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation("org.apache.logging.log4j",  "log4j-core",  "2.12.0")
     implementation("org.apache.logging.log4j",  "log4j-api",  "2.12.0")
-    implementation("com.github.h-thurow", "simple-jndi","0.18.1")
+    api("com.github.h-thurow", "simple-jndi","0.18.1")
     implementation("org.apache.logging.log4j", "log4j-slf4j-impl", "2.12.0")
     implementation("commons-io", "commons-io", "2.6")
     api("io.vavr:vavr:0.9.0")
