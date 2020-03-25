@@ -70,7 +70,7 @@ dependencies {
     implementation("org.apache.logging.log4j",  "log4j-api",  "2.12.0")
     api("com.github.h-thurow", "simple-jndi","0.18.1")
     implementation("org.apache.logging.log4j", "log4j-slf4j-impl", "2.12.0")
-    implementation("commons-io", "commons-io", "2.6")
+    api("commons-io", "commons-io", "2.6")
     api("io.vavr:vavr:0.9.0")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 }
