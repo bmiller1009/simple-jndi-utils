@@ -203,7 +203,7 @@ public class JNDIUtils {
                     var fieldKeys = getEntriesForJndiContext(memoryContext);
 
                     if (fieldKeys.containsKey(jndiName)) {
-                        var errorString = String.format("Jndi name $jndiName already exists for context %s.", context);
+                        var errorString = String.format("Jndi name %s already exists for context %s.", jndiName, context);
                         logger.error(errorString);
                         throw new IllegalAccessException(errorString);
                     } else {
