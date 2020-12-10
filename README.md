@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/bmiller1009/simple-jndi-utils.svg?branch=master)](https://travis-ci.org/bmiller1009/simple-jndi-utils)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.bradfordmiller/simple-jndi-utils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.bradfordmiller/simple-jndi-utils)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.bradfordmiller/simplejndiutils/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.bradfordmiller/simplejndiutils)
 [![github: bmiller1009/simple-jndi-utils](https://img.shields.io/badge/github%3A-issues-blue.svg?style=flat-square)](https://github.com/bmiller1009/simple-jndi-utils/issues)
 
 # simple-jndi-utils
