@@ -6,7 +6,9 @@ import org.osjava.sj.jndi.MemoryContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.activation.UnknownObjectException;
 import java.sql.Connection;
@@ -33,7 +35,7 @@ public class JNDIUtils {
      */
     public static MemoryContext getMemoryContextFromInitContext(InitialContext initCtx, String contextName) {
         try {
-            var mc = (MemoryContext) initCtx.lookup(contextName); // as MemoryContext);
+            MemoryContext mc = (MemoryContext) initCtx.lookup(contextName); // as MemoryContext);
             return mc;
         } catch (NamingException ne) {
             logger.error(String.format("Naming exception occurred on jndi lookup of context %s: %s", contextName, ne.getMessage()));
@@ -48,9 +50,9 @@ public class JNDIUtils {
      */
     public static Either<DataSource, Map<String, String>> getDataSource(String jndi, String context) {
         try {
-            var ctx = (Context) new InitialContext();
-            var mc = (MemoryContext) ctx.lookup(context);
-            var lookup = mc.lookup(jndi);
+            Context ctx = (Context) new InitialContext();
+            MemoryContext mc = (MemoryContext) ctx.lookup(context);
+            Object lookup = mc.lookup(jndi);
 
             if (lookup instanceof DataSource) {
                 return Either.left((DataSource)lookup);
@@ -86,7 +88,7 @@ public class JNDIUtils {
      * @throws SQLException
      */
     public static Connection getJndiConnection(String jndiString, String context) throws SQLException {
-        var ds = getDataSource(jndiString, context).getLeft();
+        DataSource ds = getDataSource(jndiString, context).getLeft();
         return getConnection(ds);
     }
     /***
@@ -101,9 +103,9 @@ public class JNDIUtils {
         if(context == null)
             context = new InitialContext();
 
-        var root = context.getEnvironment().get("org.osjava.sj.root").toString();
-        try(var pathFiles = Files.walk(Paths.get(root))) {
-            var files =
+        String root = context.getEnvironment().get("org.osjava.sj.root").toString();
+        try(Stream<Path> pathFiles = Files.walk(Paths.get(root))) {
+            List<String> files =
                     pathFiles.map(f ->
                             f.toString()).filter(f -> f.endsWith(".properties")).collect(Collectors.toList());
             return files;
@@ -121,11 +123,11 @@ public class JNDIUtils {
      */
     public static Map<String, String> getEntriesForJndiContext(MemoryContext memoryContext) throws NoSuchFieldException, IllegalAccessException {
 
-        var field = memoryContext.getClass().getDeclaredField("namesToObjects");
+        Field field = memoryContext.getClass().getDeclaredField("namesToObjects");
         field.setAccessible(true);
 
-        var fieldMap = (Map<Name, Object>) field.get(memoryContext);
-        var map =
+        Map<Name, Object> fieldMap = (Map<Name, Object>) field.get(memoryContext);
+        Map<String, String> map =
                 fieldMap.entrySet().stream().collect(Collectors.toMap(
                         k -> String.valueOf(k.getKey().toString()),
                         v -> String.valueOf(v.getValue()))
@@ -143,8 +145,8 @@ public class JNDIUtils {
      * @throws IllegalAccessException
      */
     public static Map.Entry<String, String> getDetailsforJndiEntry(InitialContext context, String jndiName, String entry) throws NoSuchFieldException, IllegalAccessException {
-        var mc = getMemoryContextFromInitContext(context, jndiName);
-        var entries = getEntriesForJndiContext(mc);
+        MemoryContext mc = getMemoryContextFromInitContext(context, jndiName);
+        Map<String, String> entries = getEntriesForJndiContext(mc);
         return new AbstractMap.SimpleEntry<>(entry, entries.get(entry));
     }
     /***
@@ -162,7 +164,7 @@ public class JNDIUtils {
 
         BiConsumer<File, String> writeToFile = (backupFile, delimiter) -> {
 
-            try (var bw = new BufferedWriter(new FileWriter(backupFile.getAbsolutePath(), true))) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(backupFile.getAbsolutePath(), true))) {
                 bw.write("\n");
                 values.forEach((k,v) ->
                         {
@@ -179,13 +181,13 @@ public class JNDIUtils {
             }
         };
 
-        var ctx = new InitialContext();
+        InitialContext ctx = new InitialContext();
 
-        var root = ctx.getEnvironment().get("org.osjava.sj.root").toString();
-        var colonReplace = ctx.getEnvironment().get("org.osjava.sj.colon.replace");
-        var delimiter = ctx.getEnvironment().get("org.osjava.sj.delimiter").toString();
-        var file = new File(String.format("%s/%s.properties", root, context));
-        var lockFile = new File(String.format("%s/.LOCK", root));
+        String root = ctx.getEnvironment().get("org.osjava.sj.root").toString();
+        String colonReplace = ctx.getEnvironment().get("org.osjava.sj.colon.replace").toString();
+        String delimiter = ctx.getEnvironment().get("org.osjava.sj.delimiter").toString();
+        File file = new File(String.format("%s/%s.properties", root, context));
+        File lockFile = new File(String.format("%s/.LOCK", root));
 
         try {
 
@@ -196,19 +198,19 @@ public class JNDIUtils {
                 logger.info("Lock file is absent. Locking directory before proceeding");
                 lockFile.createNewFile();
 
-                var memoryContext = getMemoryContextFromInitContext(ctx, context);
+                MemoryContext memoryContext = getMemoryContextFromInitContext(ctx, context);
 
                 if (memoryContext != null) {
                     //Check if the key being added already exists
-                    var fieldKeys = getEntriesForJndiContext(memoryContext);
+                    Map<String, String> fieldKeys = getEntriesForJndiContext(memoryContext);
 
                     if (fieldKeys.containsKey(jndiName)) {
-                        var errorString = String.format("Jndi name %s already exists for context %s.", jndiName, context);
+                        String errorString = String.format("Jndi name %s already exists for context %s.", jndiName, context);
                         logger.error(errorString);
                         throw new IllegalAccessException(errorString);
                     } else {
-                        var uuid = UUID.randomUUID().toString();
-                        var backupFile =
+                        String uuid = UUID.randomUUID().toString();
+                        File backupFile =
                                 new File(file.getParentFile().getName() + "/" + context + "_" + uuid + ".properties");
                         //Append the data to the copy
                         FileUtils.copyFile(file, backupFile);
@@ -219,7 +221,7 @@ public class JNDIUtils {
                     }
 
                 } else {
-                    var f = new File(String.format("%s/%s.properties", root, context));
+                    File f = new File(String.format("%s/%s.properties", root, context));
                     //Write the data to the copy
                     writeToFile.accept(f, delimiter);
                     return true;
