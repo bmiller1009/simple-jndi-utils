@@ -28,7 +28,7 @@ If you're using [Maven](maven.apache.org) simply specify the GAV coordinate belo
 <dependency>
   <groupId>org.bradfordmiller</groupId>
   <artifactId>simplejndiutils</artifactId>
-  <version>0.0.12</version>
+  <version>0.0.13</version>
 </dependency>
 ```
 
@@ -37,7 +37,7 @@ If you're using [Maven](maven.apache.org) simply specify the GAV coordinate belo
 Add this GAV coordinate to your SBT dependency list
 
 ```sbt
-libraryDependencies += "org.bradfordmiller" %% "simplejndiutils" % "0.0.12"
+libraryDependencies += "org.bradfordmiller" %% "simplejndiutils" % "0.0.13"
 ```
 
 #### Running with Gradle
@@ -48,6 +48,6 @@ Add this GAV coordinate to your Gradle dependencies section
 dependencies {
     ...
     ...
-    implementation 'org.bradfordmiller:simplejndiutils:0.0.12'
+    implementation 'org.bradfordmiller:simplejndiutils:0.0.13'
 }
 ```
