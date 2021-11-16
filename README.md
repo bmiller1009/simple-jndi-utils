@@ -48,6 +48,6 @@ Add this GAV coordinate to your Gradle dependencies section
 dependencies {
     ...
     ...
-    implementation 'org.bradfordmiller:simplejndiutils:0.0.13'
+    implementation 'org.bradfordmiller:simplejndiutils:0.0.14'
 }
 ```
