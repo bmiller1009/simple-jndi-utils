@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.osjava.sj.jndi.MemoryContext;
 
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
@@ -17,6 +18,13 @@ public class JNDIUtilsTest {
 
     @BeforeAll
     public static void removeContext() throws NamingException {
+
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.osjava.sj.SimpleContextFactory");
+        System.setProperty("org.osjava.sj.jndi.shared", "false");
+        System.setProperty("org.osjava.sj.root", "src/test/resources/jndi");
+        System.setProperty("org.osjava.sj.colon.replace", "--");
+        System.setProperty("org.osjava.sj.delimiter", "/");
+
         String ctx = "default_ds_3";
         InitialContext initCtx = new InitialContext();
         String root = initCtx.getEnvironment().get("org.osjava.sj.root").toString();

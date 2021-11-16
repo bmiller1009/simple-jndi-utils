@@ -59,9 +59,9 @@ public class JNDIUtils {
             } else if (lookup instanceof Map) {
                 return Either.right((Map<String, String>)lookup);
             } else {
-                throw new UnknownObjectException(String.format("jndi entry %s for context %s is neither a DataSource or a Map<string, String", jndi, context));
+                throw new InvalidObjectException(String.format("jndi entry %s for context %s is neither a DataSource or a Map<string, String", jndi, context));
             }
-        } catch (NamingException | UnknownObjectException ne) {
+        } catch (NamingException | InvalidObjectException ne) {
             logger.error(String.format("Naming exception occurred on jndi lookup of context %s: %s", context, ne.getMessage()));
             return null;
         }
